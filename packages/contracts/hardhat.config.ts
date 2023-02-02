@@ -13,6 +13,7 @@ import "./tasks/accounts"
 import "./tasks/deploy-semaphore"
 import "./tasks/deploy-semaphore-voting"
 import "./tasks/deploy-semaphore-whistleblowing"
+import "./tasks/deploy-semaphore-zk3"
 
 dotenvConfig({ path: resolve(__dirname, "../../.env") })
 
