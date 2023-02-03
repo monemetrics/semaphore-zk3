@@ -60,13 +60,22 @@ contract SemaphoreZk3 is ISemaphoreZk3, SemaphoreGroups {
     }
 
     /// @dev See {ISemaphoreZk3-addVoter}.
-    function addIdentity(uint256 circleId, uint256 identityCommitment, string calldata contentURI) public override onlyCoordinator(circleId) {
+    function addIdentity(
+        uint256 circleId,
+        uint256 identityCommitment,
+        string calldata contentURI
+    ) public override onlyCoordinator(circleId) {
         _addMember(circleId, identityCommitment);
         updateContentURI(circleId, contentURI);
     }
 
-    function revokeIdentity(uint256 circleId, uint256 identityCommitment, uint256[] calldata proofSiblings,
-        uint8[] calldata proofPathIndices, string calldata contentURI) public override onlyCoordinator(circleId) {
+    function revokeIdentity(
+        uint256 circleId,
+        uint256 identityCommitment,
+        uint256[] calldata proofSiblings,
+        uint8[] calldata proofPathIndices,
+        string calldata contentURI
+    ) public override onlyCoordinator(circleId) {
         _removeMember(circleId, identityCommitment, proofSiblings, proofPathIndices);
         updateContentURI(circleId, contentURI);
     }

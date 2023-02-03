@@ -7,7 +7,7 @@ interface ISemaphoreZk3 {
     error Semaphore__CallerIsNotCoordinator();
     error Semaphore__MerkleTreeDepthIsNotSupported();
     error Semaphore__YouAreUsingTheSameNillifierTwice();
-    
+
     struct Verifier {
         address contractAddress;
         uint256 merkleTreeDepth;
@@ -33,7 +33,7 @@ interface ISemaphoreZk3 {
     /// @param circleId: Id of the group.
     /// @param signal: the signal verified.
     event MembershipVerified(uint256 indexed circleId, uint256 signal);
-    
+
     /// @dev Emitted when a coordinator updateds the URI for a circle.
     /// @param circleId: Id of the group.
     /// @param contentURI: the contentURI.
@@ -50,24 +50,30 @@ interface ISemaphoreZk3 {
         string calldata contentURI
     ) external;
 
-    function updateContentURI(
-        uint256 circleId,
-        string calldata contentURI
-    ) external;
+    function updateContentURI(uint256 circleId, string calldata contentURI) external;
 
     /// @dev Adds a user to a group.
     /// @param circleId: Id of the group.
     /// @param identityCommitment: Identity commitment of the group member.
-    function addIdentity(uint256 circleId, uint256 identityCommitment, string calldata contentURI) external;
+    function addIdentity(
+        uint256 circleId,
+        uint256 identityCommitment,
+        string calldata contentURI
+    ) external;
 
     /// @dev removes a user from a gorup.
     /// @param circleId: Id of the group.
     /// @param identityCommitment: Identity commitment of the group member.
-    function revokeIdentity(uint256 circleId, uint256 identityCommitment, uint256[] calldata proofSiblings,
-        uint8[] calldata proofPathIndices, string calldata contentURI) external;
-    
+    function revokeIdentity(
+        uint256 circleId,
+        uint256 identityCommitment,
+        uint256[] calldata proofSiblings,
+        uint8[] calldata proofPathIndices,
+        string calldata contentURI
+    ) external;
 
     function getContentURI(uint256 circleId) external view returns (string memory);
+
     /// @dev verify an identity membership in a circle.
     /// @param signal: signal.
     /// @param nullifierHash: Nullifier hash.
@@ -81,7 +87,7 @@ interface ISemaphoreZk3 {
         uint256 externalNullifier,
         uint256[8] calldata proof
     ) external;
-    
+
     /// @dev verify an identity membership in a circle.
     /// @param signal: signal.
     /// @param nullifierHash: Nullifier hash.
@@ -95,5 +101,4 @@ interface ISemaphoreZk3 {
         uint256 externalNullifier,
         uint256[8] calldata proof
     ) external view returns (bool);
-
 }

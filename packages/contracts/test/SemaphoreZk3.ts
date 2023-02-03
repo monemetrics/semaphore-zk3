@@ -1,12 +1,7 @@
 /* eslint-disable jest/valid-expect */
 import Group from "../../group/src/group"
 import Identity from "../../identity/src/identity"
-import {
-    FullProof,
-    Proof,
-    generateProof,
-    verifyProof
-} from "../../proof/src";
+import { FullProof, Proof, generateProof, verifyProof } from "../../proof/src"
 import { expect } from "chai"
 import { BigNumber, Signer, utils } from "ethers"
 import { ethers, run } from "hardhat"
@@ -27,7 +22,7 @@ describe("SemaphoreZk3", () => {
     before(async () => {
         // const { address: verifierAddress } = await run("deploy:verifier", { logs: false, depth: treeDepth })
         const { semaphoreZk3, pairingAddress } = await run("deploy:semaphore-zk3", {
-            logs: false,
+            logs: false
         })
         contract = semaphoreZk3
         pairingContract = await ethers.getContractAt("Pairing", pairingAddress)
@@ -42,11 +37,11 @@ describe("SemaphoreZk3", () => {
             await expect(transaction).to.be.revertedWithCustomError(
                 contract,
                 "Semaphore__MerkleTreeDepthIsNotSupported"
-            );
+            )
         })
 
         it("Should create a social circle", async () => {
-            const transaction = contract.createCircle(circleIds[0], coordinator, treeDepth, "ipfs://wrongHash");
+            const transaction = contract.createCircle(circleIds[0], coordinator, treeDepth, "ipfs://wrongHash")
 
             await expect(transaction).to.emit(contract, "CircleCreated").withArgs(circleIds[0], coordinator)
         })
@@ -54,10 +49,7 @@ describe("SemaphoreZk3", () => {
         it("Should not create a circle if it already exists", async () => {
             const transaction = contract.createCircle(circleIds[0], coordinator, treeDepth, "ipfs://wrongHash")
 
-            await expect(transaction).to.be.revertedWithCustomError(
-                contract,
-                "Semaphore__GroupAlreadyExists"
-            )
+            await expect(transaction).to.be.revertedWithCustomError(contract, "Semaphore__GroupAlreadyExists")
         })
     })
 
@@ -66,7 +58,6 @@ describe("SemaphoreZk3", () => {
             await contract.createCircle(circleIds[1], coordinator, treeDepth, "ipfs://wrongHash")
             let grp = new Group(circleIds[1], treeDepth)
             grp.addMember(new Identity("test").getCommitment())
-
         })
 
         it("Should not add an identity if the caller is not the coordinator", async () => {
@@ -82,7 +73,9 @@ describe("SemaphoreZk3", () => {
             const identity = new Identity("test")
             const identityCommitment = identity.getCommitment()
 
-            const transaction = contract.connect(accounts[1]).addIdentity(circleIds[1], identityCommitment, "ipfs://wrongHash");
+            const transaction = contract
+                .connect(accounts[1])
+                .addIdentity(circleIds[1], identityCommitment, "ipfs://wrongHash")
 
             await expect(transaction)
                 .to.emit(contract, "MemberAdded")
@@ -111,7 +104,13 @@ describe("SemaphoreZk3", () => {
 
             const { siblings, pathIndices } = group.generateMerkleProof(0)
 
-            const transaction = contract.revokeIdentity(circleIds[0], identityCommitment, siblings, pathIndices, "ipfs://wrongHash")
+            const transaction = contract.revokeIdentity(
+                circleIds[0],
+                identityCommitment,
+                siblings,
+                pathIndices,
+                "ipfs://wrongHash"
+            )
 
             await expect(transaction).to.be.revertedWithCustomError(contract, "Semaphore__CallerIsNotCoordinator")
         })
@@ -131,7 +130,9 @@ describe("SemaphoreZk3", () => {
 
             const { siblings, pathIndices, root } = group.generateMerkleProof(2)
 
-            const transaction = contract.connect(accounts[1]).revokeIdentity(groupId, BigInt(3), siblings, pathIndices, "ipfs://wrongHash")
+            const transaction = contract
+                .connect(accounts[1])
+                .revokeIdentity(groupId, BigInt(3), siblings, pathIndices, "ipfs://wrongHash")
 
             await expect(transaction).to.emit(contract, "MemberRemoved").withArgs(groupId, 2, BigInt(3), root)
         })
@@ -144,9 +145,8 @@ describe("SemaphoreZk3", () => {
         const bytes32Vote = utils.formatBytes32String(vote)
         let solidityProof: Proof
         let fullProof: FullProof
-            
-        before(async () => {
 
+        before(async () => {
             const group = new Group(circleIds[2], treeDepth)
             group.addMembers([identityCommitment, BigInt(1)])
             await contract.createCircle(circleIds[2], coordinator, treeDepth, "ipfs://wrongHash")
@@ -155,14 +155,20 @@ describe("SemaphoreZk3", () => {
 
             fullProof = await generateProof(identity, group, circleIds[2], vote, {
                 wasmFilePath,
-                zkeyFilePath,
+                zkeyFilePath
             })
 
             solidityProof = fullProof.proof
         })
 
         it("Should not verify a signal if the caller is not the coordinator [WILL DEPRECATE]", async () => {
-            const transaction = contract.broadcastSignal(bytes32Vote, fullProof.nullifierHash, circleIds[0], fullProof.externalNullifier, solidityProof)
+            const transaction = contract.broadcastSignal(
+                bytes32Vote,
+                fullProof.nullifierHash,
+                circleIds[0],
+                fullProof.externalNullifier,
+                solidityProof
+            )
 
             await expect(transaction).to.be.revertedWithCustomError(contract, "Semaphore__CallerIsNotCoordinator")
         })
@@ -178,7 +184,13 @@ describe("SemaphoreZk3", () => {
         it("Should broadcast signal", async () => {
             const transaction = contract
                 .connect(accounts[1])
-                .broadcastSignal(vote, fullProof.nullifierHash, circleIds[2], fullProof.externalNullifier, solidityProof)
+                .broadcastSignal(
+                    vote,
+                    fullProof.nullifierHash,
+                    circleIds[2],
+                    fullProof.externalNullifier,
+                    solidityProof
+                )
 
             await expect(transaction).to.emit(contract, "MembershipVerified").withArgs(circleIds[2], vote)
         })
@@ -194,9 +206,18 @@ describe("SemaphoreZk3", () => {
         it("Should be able to double signal by default", async () => {
             const transaction = contract
                 .connect(accounts[1])
-                .broadcastSignal(vote, fullProof.nullifierHash, circleIds[1], fullProof.externalNullifier, solidityProof)
+                .broadcastSignal(
+                    vote,
+                    fullProof.nullifierHash,
+                    circleIds[1],
+                    fullProof.externalNullifier,
+                    solidityProof
+                )
 
-            await expect(transaction).not.to.be.revertedWithCustomError(contract, "Semaphore__YouAreUsingTheSameNillifierTwice")
+            await expect(transaction).not.to.be.revertedWithCustomError(
+                contract,
+                "Semaphore__YouAreUsingTheSameNillifierTwice"
+            )
         })
     })
 })
