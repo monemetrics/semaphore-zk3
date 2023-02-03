@@ -2,9 +2,9 @@
 import { expect } from "chai"
 import { Signer, utils } from "ethers"
 import { ethers, run } from "hardhat"
-import Group from "@semaphore-protocol/group/src/group"
-import Identity from "@semaphore-protocol/identity/src/identity"
-import { FullProof, Proof, generateProof } from "@semaphore-protocol/proof/src"
+import { Group } from "@semaphore-protocol/group"
+import { Identity } from "@semaphore-protocol/identity"
+import { FullProof, Proof, generateProof } from "@semaphore-protocol/proof"
 import { SemaphoreZk3, Pairing } from "../build/typechain"
 
 describe("SemaphoreZk3", () => {
