@@ -1,10 +1,10 @@
 /* eslint-disable jest/valid-expect */
-import Group from "../../group/src/group"
-import Identity from "../../identity/src/identity"
-import { FullProof, Proof, generateProof, verifyProof } from "../../proof/src"
 import { expect } from "chai"
-import { BigNumber, Signer, utils } from "ethers"
+import { Signer, utils } from "ethers"
 import { ethers, run } from "hardhat"
+import Group from "@semaphore-protocol/group/src/group"
+import Identity from "@semaphore-protocol/identity/src/identity"
+import { FullProof, Proof, generateProof } from "@semaphore-protocol/proof/src"
 import { SemaphoreZk3, Pairing } from "../build/typechain"
 
 describe("SemaphoreZk3", () => {
@@ -56,7 +56,7 @@ describe("SemaphoreZk3", () => {
     describe("# addIdentity", () => {
         before(async () => {
             await contract.createCircle(circleIds[1], coordinator, treeDepth, "ipfs://wrongHash")
-            let grp = new Group(circleIds[1], treeDepth)
+            const grp = new Group(circleIds[1], treeDepth)
             grp.addMember(new Identity("test").getCommitment())
         })
 

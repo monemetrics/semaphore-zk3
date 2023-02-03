@@ -82,7 +82,8 @@ contract SemaphoreZk3 is ISemaphoreZk3, SemaphoreGroups {
 
     function updateContentURI(uint256 circleId, string calldata contentURI) public override onlyCoordinator(circleId) {
         circles[circleId].contentURI = contentURI;
-        // todo: make sure the contentURI is valid and doesn't equal the current one. (assuming it's content addressable)
+        // todo: make sure the contentURI is valid and doesn't equal the current one.
+        // (assuming it's content addressable)
         emit CircleURIUpdated(circleId, contentURI);
     }
 
