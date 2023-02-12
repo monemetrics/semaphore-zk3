@@ -8,11 +8,6 @@ interface ISemaphoreZk3 {
     error Semaphore__MerkleTreeDepthIsNotSupported();
     error Semaphore__YouAreUsingTheSameNillifierTwice();
 
-    struct Verifier {
-        address contractAddress;
-        uint256 merkleTreeDepth;
-    }
-
     struct Circle {
         address coordinator;
         string contentURI;
@@ -24,11 +19,6 @@ interface ISemaphoreZk3 {
     /// @param circleId: Id of the group.
     /// @param coordinator: Coordinator of the group.
     event CircleCreated(uint256 circleId, address indexed coordinator);
-
-    /// @dev Emitted when a user is added to a group.
-    /// @param circleId: Id of the group.
-    /// @param identityCommitment: identity added.
-    event IdentityAdded(uint256 indexed circleId, uint256 identityCommitment);
 
     /// @dev Emitted when a user verifies their membership.
     /// @param circleId: Id of the group.
