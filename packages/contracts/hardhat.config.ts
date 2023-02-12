@@ -35,6 +35,11 @@ function getNetworks(): NetworksUserConfig {
             url: "https://arb1.arbitrum.io/rpc",
             chainId: 42161,
             accounts
+        },
+        mumbai: {
+            url: process.env.RPC_URL || "https://rpc-mumbai.maticvigil.com",
+            chainId: 80001,
+            accounts
         }
     }
 }
@@ -64,7 +69,17 @@ const hardhatConfig: HardhatUserConfig = {
         target: "ethers-v5"
     },
     etherscan: {
-        apiKey: process.env.ETHERSCAN_API_KEY
+        apiKey: process.env.ETHERSCAN_API_KEY,
+        customChains: [
+            {
+                network: "mumbai",
+                chainId: 80001,
+                urls: {
+                    apiURL: "https://api-testnet.polygonscan.com/",
+                    browserURL: "https://mumbai.polygonscan.com/"
+                }
+            }
+        ]
     }
 }
 
