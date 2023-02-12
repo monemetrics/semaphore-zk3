@@ -14,10 +14,6 @@ contract SemaphoreZk3 is ISemaphoreZk3, SemaphoreGroups {
     /// @dev Gets a circle id and returns the circle data.
     mapping(uint256 => Circle) internal circles;
 
-    /// @dev Gets a nullifier hash and returns true or false.
-    /// It is used to prevent double-voting.
-    mapping(uint256 => bool) internal nullifierHashes;
-
     /// @dev Initializes the Semaphore verifiers used to verify the user's ZK proofs.
     /// @param _verifier: Semaphore verifier
     constructor(ISemaphoreVerifier _verifier) {
@@ -45,16 +41,16 @@ contract SemaphoreZk3 is ISemaphoreZk3, SemaphoreGroups {
             revert Semaphore__MerkleTreeDepthIsNotSupported();
         }
 
+        if (circles[circleId].coordinator != address(0)) {
+            revert Semaphore__GroupAlreadyExists();
+        }
+
         _createGroup(circleId, merkleTreeDepth);
 
-        Circle memory circle;
-
-        circle.coordinator = coordinator;
+        circles[circleId].coordinator = coordinator;
         // don't store the nullifier hash so we can double spend the same note for now
-        circle.doubleSpend = true;
-        circle.contentURI = contentURI;
-
-        circles[circleId] = circle;
+        circles[circleId].doubleSpend = true;
+        circles[circleId].contentURI = contentURI;
 
         emit CircleCreated(circleId, coordinator);
     }
@@ -99,10 +95,9 @@ contract SemaphoreZk3 is ISemaphoreZk3, SemaphoreGroups {
         uint256 externalNullifier,
         uint256[8] calldata proof
     ) public override onlyCoordinator(circleId) {
-        Circle memory circle = circles[circleId];
 
         // note this will only revert if the doubleSpend flag is false even if the nullifierHash is already used
-        if (circle.doubleSpend == false && nullifierHashes[nullifierHash]) {
+        if (circles[circleId].doubleSpend == false && circles[circleId].nullifierHashes[nullifierHash]) {
             revert Semaphore__YouAreUsingTheSameNillifierTwice();
         }
 
@@ -111,12 +106,12 @@ contract SemaphoreZk3 is ISemaphoreZk3, SemaphoreGroups {
 
         verifier.verifyProof(merkleTreeRoot, nullifierHash, signal, externalNullifier, proof, merkleTreeDepth);
 
-        nullifierHashes[nullifierHash] = true;
+        circles[circleId].nullifierHashes[nullifierHash] = true;
 
         emit MembershipVerified(circleId, signal);
     }
 
-    /// @dev See {ISemaphoreZk3-broadcastSignal}.
+    /// @dev See {ISemaphoreZk3-isValidProof}.
     function isValidProof(
         uint256 signal,
         uint256 nullifierHash,

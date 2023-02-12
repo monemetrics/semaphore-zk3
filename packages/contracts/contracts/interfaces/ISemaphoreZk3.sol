@@ -17,6 +17,7 @@ interface ISemaphoreZk3 {
         address coordinator;
         string contentURI;
         bool doubleSpend;
+        mapping(uint256 => bool) nullifierHashes;
     }
 
     /// @dev Emitted when a new group is created.
