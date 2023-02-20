@@ -95,7 +95,6 @@ contract SemaphoreZk3 is ISemaphoreZk3, SemaphoreGroups {
         uint256 externalNullifier,
         uint256[8] calldata proof
     ) public override onlyCoordinator(circleId) {
-
         // note this will only revert if the doubleSpend flag is false even if the nullifierHash is already used
         if (circles[circleId].doubleSpend == false && circles[circleId].nullifierHashes[nullifierHash]) {
             revert Semaphore__YouAreUsingTheSameNillifierTwice();
