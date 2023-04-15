@@ -52,7 +52,7 @@ contract SemaphoreZk3 is ISemaphoreZk3, SemaphoreGroups {
         circles[circleId].doubleSpend = true;
         circles[circleId].contentURI = contentURI;
 
-        emit CircleCreated(circleId, coordinator);
+        emit CircleCreated(circleId, coordinator, contentURI);
     }
 
     /// @dev See {ISemaphoreZk3-addVoter}.
@@ -94,7 +94,7 @@ contract SemaphoreZk3 is ISemaphoreZk3, SemaphoreGroups {
         uint256 circleId,
         uint256 externalNullifier,
         uint256[8] calldata proof
-    ) public override onlyCoordinator(circleId) {
+    ) public override {
         // note this will only revert if the doubleSpend flag is false even if the nullifierHash is already used
         if (circles[circleId].doubleSpend == false && circles[circleId].nullifierHashes[nullifierHash]) {
             revert Semaphore__YouAreUsingTheSameNillifierTwice();
@@ -107,7 +107,7 @@ contract SemaphoreZk3 is ISemaphoreZk3, SemaphoreGroups {
 
         circles[circleId].nullifierHashes[nullifierHash] = true;
 
-        emit MembershipVerified(circleId, signal);
+        emit MembershipVerified(circleId, signal, proof);
     }
 
     /// @dev See {ISemaphoreZk3-isValidProof}.

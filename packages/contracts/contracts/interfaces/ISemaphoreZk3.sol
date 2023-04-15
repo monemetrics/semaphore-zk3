@@ -18,12 +18,14 @@ interface ISemaphoreZk3 {
     /// @dev Emitted when a new group is created.
     /// @param circleId: Id of the group.
     /// @param coordinator: Coordinator of the group.
-    event CircleCreated(uint256 circleId, address indexed coordinator);
+    /// @param contentURI: the contentURI.
+    event CircleCreated(uint256 circleId, address indexed coordinator, string contentURI);
 
     /// @dev Emitted when a user verifies their membership.
     /// @param circleId: Id of the group.
     /// @param signal: the signal verified.
-    event MembershipVerified(uint256 indexed circleId, uint256 signal);
+    /// @param proof: the proof.
+    event MembershipVerified(uint256 indexed circleId, uint256 signal, uint256[8] proof);
 
     /// @dev Emitted when a coordinator updateds the URI for a circle.
     /// @param circleId: Id of the group.

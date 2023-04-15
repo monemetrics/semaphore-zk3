@@ -1,9 +1,10 @@
 import { poseidon_gencontract as poseidonContract } from "circomlibjs"
 import { task, types } from "hardhat/config"
+import { saveDeployedContracts } from "../scripts/utils"
 
 task("deploy:semaphore-zk3", "Deploy a SemaphoreZK3 contract")
     .addOptionalParam<boolean>("logs", "Print the logs", true, types.boolean)
-    .setAction(async ({ logs }, { ethers }): Promise<any> => {
+    .setAction(async ({ logs }, { ethers, hardhatArguments }): Promise<any> => {
         const PairingFactory = await ethers.getContractFactory("Pairing")
         const pairing = await PairingFactory.deploy()
 
@@ -67,6 +68,14 @@ task("deploy:semaphore-zk3", "Deploy a SemaphoreZK3 contract")
         if (logs) {
             console.info(`semaphoreZk3 contract has been deployed to: ${semaphoreZk3.address}`)
         }
+
+        saveDeployedContracts(hardhatArguments.network, {
+            Pairing: pairing.address,
+            SemaphoreVerifier: semaphoreVerifier.address,
+            Poseidon: poseidon.address,
+            IncrementalBinaryTree: incrementalBinaryTree.address,
+            Semaphore: semaphoreZk3.address
+        })
 
         return {
             semaphoreZk3,
