@@ -13,26 +13,33 @@ import "./tasks/accounts"
 import "./tasks/deploy-semaphore"
 import "./tasks/deploy-semaphore-voting"
 import "./tasks/deploy-semaphore-whistleblowing"
+import "./tasks/deploy-semaphore-zk3"
+import "./tasks/zk3"
 
 dotenvConfig({ path: resolve(__dirname, "../../.env") })
 
 function getNetworks(): NetworksUserConfig {
-    if (!process.env.INFURA_API_KEY || !process.env.BACKEND_PRIVATE_KEY) {
+    if (!process.env.BACKEND_PRIVATE_KEY) {
         return {}
     }
 
-    const infuraApiKey = process.env.INFURA_API_KEY
+    // const infuraApiKey = process.env.INFURA_API_KEY
     const accounts = [`0x${process.env.BACKEND_PRIVATE_KEY}`]
 
     return {
         goerli: {
-            url: `https://goerli.infura.io/v3/${infuraApiKey}`,
+            url: `https://eth-goerli.public.blastapi.io`,
             chainId: 5,
             accounts
         },
         arbitrum: {
             url: "https://arb1.arbitrum.io/rpc",
             chainId: 42161,
+            accounts
+        },
+        mumbai: {
+            url: process.env.RPC_URL || "https://rpc-mumbai.maticvigil.com",
+            chainId: 80001,
             accounts
         }
     }
@@ -48,7 +55,6 @@ const hardhatConfig: HardhatUserConfig = {
     },
     networks: {
         hardhat: {
-            chainId: 1337,
             allowUnlimitedContractSize: true
         },
         ...getNetworks()
@@ -64,6 +70,16 @@ const hardhatConfig: HardhatUserConfig = {
     },
     etherscan: {
         apiKey: process.env.ETHERSCAN_API_KEY
+        // customChains: [
+        //     {
+        //         network: "mumbai",
+        //         chainId: 80001,
+        //         urls: {
+        //             apiURL: "https://api-testnet.polygonscan.com/",
+        //             browserURL: "https://mumbai.polygonscan.com/"
+        //         }
+        //     }
+        // ]
     }
 }
 
