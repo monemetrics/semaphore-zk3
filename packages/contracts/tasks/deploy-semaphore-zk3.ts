@@ -4,7 +4,8 @@ import { saveDeployedContracts } from "../scripts/utils"
 
 task("deploy:semaphore-zk3", "Deploy a SemaphoreZK3 contract")
     .addOptionalParam<boolean>("logs", "Print the logs", true, types.boolean)
-    .setAction(async ({ logs }, { ethers, hardhatArguments }): Promise<any> => {
+    .setAction(async ({ logs }, { ethers, deployments, hardhatArguments }): Promise<any> => {
+        const { deploy } = deployments
         const PairingFactory = await ethers.getContractFactory("Pairing")
         const pairing = await PairingFactory.deploy()
 
@@ -61,9 +62,30 @@ task("deploy:semaphore-zk3", "Deploy a SemaphoreZK3 contract")
             }
         })
 
-        const semaphoreZk3 = await SemaphoreZk3Factory.deploy(semaphoreVerifier.address)
+        const resp = await deploy("SemaphoreZk3", {
+            from: signer.address,
+            log: true,
+            proxy: {
+                owner: signer.address,
+                execute: {
+                    init: {
+                        methodName: "initialize",
+                        args: [semaphoreVerifier.address]
+                    },
+                    onUpgrade: {
+                        methodName: "initialize",
+                        args: [semaphoreVerifier.address]
+                    }
+                }
+            },
+            libraries: {
+                IncrementalBinaryTree: incrementalBinaryTree.address
+            }
+        })
 
-        await semaphoreZk3.deployed()
+        const semaphoreZk3 = await SemaphoreZk3Factory.attach(resp.address)
+
+        // await semaphoreZk3.deployed()
 
         if (logs) {
             console.info(`semaphoreZk3 contract has been deployed to: ${semaphoreZk3.address}`)

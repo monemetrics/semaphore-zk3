@@ -7,17 +7,20 @@ import "../interfaces/ISemaphoreVerifier.sol";
 
 /// @title SemaphoreZK3 circles contract.
 /// @dev The following code allows you to create circles, add members and allow them to double signal.
-contract SemaphoreZk3 is ISemaphoreZk3, SemaphoreGroups {
+contract SemaphoreZk3 is Initializable, ISemaphoreZk3, SemaphoreGroups {
     /// @dev Gets a tree depth and returns its verifier address.
     ISemaphoreVerifier internal verifier;
+
+    address public deployer;
+    address public governance;
 
     /// @dev Gets a circle id and returns the circle data.
     mapping(uint256 => Circle) internal circles;
 
-    /// @dev Initializes the Semaphore verifiers used to verify the user's ZK proofs.
-    /// @param _verifier: Semaphore verifier
-    constructor(ISemaphoreVerifier _verifier) {
-        verifier = _verifier;
+
+    constructor() {
+        _disableInitializers();
+        // verifier = _verifier;
     }
 
     /// @dev Checks if the circle coordinator is the transaction sender.
@@ -30,13 +33,43 @@ contract SemaphoreZk3 is ISemaphoreZk3, SemaphoreGroups {
         _;
     }
 
+    modifier onlyGovernance() {
+        if (governance != _msgSender()) {
+            revert Zk3__CallerIsNotGovernance();
+        }
+
+        _;
+    }
+
+    modifier onlyDeployer() {
+        if (deployer != _msgSender()) {
+            revert Zk3__CallerIsNotOwner();
+        }
+
+        _;
+    }
+
+    function initialize(ISemaphoreVerifier _verifier) public initializer {
+        verifier = _verifier;
+        deployer = _msgSender();
+        governance = _msgSender();
+    }
+
+    function setGovernance(address _governance) public onlyDeployer {
+        address currentGovernance = governance;
+        governance = _governance;
+
+        emit GovernanceUpdated(currentGovernance, _governance);
+    }
+    
+
     /// @dev See {ISemaphoreZk3-createcircle}.
     function createCircle(
         uint256 circleId,
         address coordinator,
         uint256 merkleTreeDepth,
         string calldata contentURI
-    ) public override {
+    ) public override onlyGovernance {
         if (merkleTreeDepth < 16 || merkleTreeDepth > 32) {
             revert Semaphore__MerkleTreeDepthIsNotSupported();
         }

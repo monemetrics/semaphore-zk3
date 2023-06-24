@@ -1,7 +1,7 @@
 {
-    "Pairing": "0x7a13051aB52BdeCf21de0fA74e7869Df885ecb0a",
-    "SemaphoreVerifier": "0xd6af6FE8710e3B9a979dc8350F2ce61BB7654030",
-    "Poseidon": "0x67FCE0aA8E69bC02552d9bf3B498d48eB37e828e",
-    "IncrementalBinaryTree": "0x4DA21BDD68cC5A57185F5359A1c5B501fAd482fc",
-    "Semaphore": "0xba4cf9D716Ec42E2996Fc2e6b8B97854CD344Ce3"
+    "Pairing": "0xbd6EE45493c1077d4043d7A5Ba987fE2A2e1E201",
+    "SemaphoreVerifier": "0x719ecBA642a5d7261aC48c2ba2488F3baEA99A80",
+    "Poseidon": "0x62BFAfA5BEdcadF2C496aEC950f0Cc614E36C1a3",
+    "IncrementalBinaryTree": "0xa45C921296258c837424135216438Bcaa9c79013",
+    "Semaphore": "0xc37b46664Eb529A28B944E21daEcD8B11b0745dF"
 }
