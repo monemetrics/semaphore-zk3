@@ -3,12 +3,13 @@ pragma solidity 0.8.4;
 
 import "../interfaces/ISemaphoreGroups.sol";
 import "@zk-kit/incremental-merkle-tree.sol/IncrementalBinaryTree.sol";
-import "@openzeppelin/contracts/utils/Context.sol";
+// import "@openzeppelin/contracts/utils/Context.sol";
+import "@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable.sol";
 
 /// @title Semaphore groups contract.
 /// @dev This contract allows you to create groups, add, remove and update members.
 /// You can use getters to obtain informations about groups (root, depth, number of leaves).
-abstract contract SemaphoreGroups is Context, ISemaphoreGroups {
+abstract contract SemaphoreGroups is ContextUpgradeable, ISemaphoreGroups {
     using IncrementalBinaryTree for IncrementalTreeData;
 
     /// @dev Gets a group id and returns the tree data.

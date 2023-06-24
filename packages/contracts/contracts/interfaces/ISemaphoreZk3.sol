@@ -7,6 +7,8 @@ interface ISemaphoreZk3 {
     error Semaphore__CallerIsNotCoordinator();
     error Semaphore__MerkleTreeDepthIsNotSupported();
     error Semaphore__YouAreUsingTheSameNillifierTwice();
+    error Zk3__CallerIsNotGovernance();
+    error Zk3__CallerIsNotOwner();
 
     struct Circle {
         address coordinator;
@@ -14,6 +16,8 @@ interface ISemaphoreZk3 {
         bool doubleSpend;
         mapping(uint256 => bool) nullifierHashes;
     }
+
+    event GovernanceUpdated(address previousGovernance, address newGovernance);
 
     /// @dev Emitted when a new group is created.
     /// @param circleId: Id of the group.

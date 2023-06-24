@@ -1,6 +1,7 @@
 import "@nomicfoundation/hardhat-chai-matchers"
 import "@nomiclabs/hardhat-ethers"
 import "@nomiclabs/hardhat-etherscan"
+import "hardhat-deploy"
 import "@typechain/hardhat"
 import { config as dotenvConfig } from "dotenv"
 import "hardhat-gas-reporter"
@@ -35,6 +36,11 @@ function getNetworks(): NetworksUserConfig {
         arbitrum: {
             url: "https://arb1.arbitrum.io/rpc",
             chainId: 42161,
+            accounts
+        },
+        matic: {
+            url: process.env.RPC_URL || "https://rpc-mainnet.maticvigil.com",
+            chainId: 137,
             accounts
         },
         mumbai: {
