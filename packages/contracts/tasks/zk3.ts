@@ -1,9 +1,8 @@
 import { task, types } from "hardhat/config"
+import { Group } from "../../group"
+import { Identity } from "../../identity"
+import { generateProof, verifyProof } from "../../proof"
 import { getDeployedContracts } from "../scripts/utils"
-import { Identity } from "@semaphore-protocol/identity"
-import { Group } from "@semaphore-protocol/group"
-import { generateProof, verifyProof } from "@semaphore-protocol/proof"
-import { verify } from "crypto"
 
 task("zk3:create-circle", "create a circle")
     .addOptionalParam<boolean>("logs", "Print the logs", true, types.boolean)
@@ -16,13 +15,13 @@ task("zk3:create-circle", "create a circle")
             throw new Error("No deployed contracts found, check deployed-contracts folder")
         }
 
-        const [signer, governance] = await ethers.getSigners()
+        const [signer] = await ethers.getSigners()
 
         const SemaphoreZk3 = await ethers.getContractFactory("SemaphoreZk3", {
             libraries: {
                 IncrementalBinaryTree: deployedContracts.IncrementalBinaryTree
             },
-            signer: governance
+            signer
         })
 
         const semaphoreZk3 = SemaphoreZk3.attach(deployedContracts.Semaphore)

@@ -1,9 +1,9 @@
 import "@nomicfoundation/hardhat-chai-matchers"
+import "@nomicfoundation/hardhat-verify"
 import "@nomiclabs/hardhat-ethers"
-import "@nomiclabs/hardhat-etherscan"
-import "hardhat-deploy"
 import "@typechain/hardhat"
 import { config as dotenvConfig } from "dotenv"
+import "hardhat-deploy"
 import "hardhat-gas-reporter"
 import { HardhatUserConfig } from "hardhat/config"
 import { NetworksUserConfig } from "hardhat/types"
@@ -18,6 +18,7 @@ import "./tasks/deploy-semaphore-zk3"
 import "./tasks/zk3"
 
 dotenvConfig({ path: resolve(__dirname, "../../.env") })
+const BLOCK_EXPLORER_KEY = process.env.BLOCK_EXPLORER_KEY || ""
 
 function getNetworks(): NetworksUserConfig {
     if (!process.env.BACKEND_PRIVATE_KEY) {
@@ -75,17 +76,19 @@ const hardhatConfig: HardhatUserConfig = {
         target: "ethers-v5"
     },
     etherscan: {
-        apiKey: process.env.ETHERSCAN_API_KEY
-        // customChains: [
-        //     {
-        //         network: "mumbai",
-        //         chainId: 80001,
-        //         urls: {
-        //             apiURL: "https://api-testnet.polygonscan.com/",
-        //             browserURL: "https://mumbai.polygonscan.com/"
-        //         }
-        //     }
-        // ]
+        apiKey: {
+            matic: BLOCK_EXPLORER_KEY
+        },
+        customChains: [
+            {
+                network: "matic",
+                chainId: 137,
+                urls: {
+                    apiURL: "https://api.polygonscan.com/api",
+                    browserURL: "https://polygonscan.com/"
+                }
+            }
+        ]
     }
 }
 
